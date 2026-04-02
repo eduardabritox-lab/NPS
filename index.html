@@ -5,28 +5,38 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>NPS Ranking</title>
 
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 <style>
-/* (SEU CSS ORIGINAL — não mexi) */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #0d0d0d; font-family: 'DM Sans', sans-serif; color: #e8e8e8; }
-/* ... (mantive tudo igual, pode colar seu CSS inteiro aqui) */
+body {
+  background: #0d0d0d;
+  color: #fff;
+  font-family: sans-serif;
+  padding: 20px;
+}
+button { margin: 5px; padding: 8px; }
 </style>
 </head>
 
 <body>
 
-<div id="app">
-  <!-- SEU HTML ORIGINAL INTACTO -->
-</div>
+<h2 id="month"></h2>
+
+<button onclick="changeMonth(-1)">◀</button>
+<button onclick="changeMonth(1)">▶</button>
+
+<h3 id="count"></h3>
+
+<div id="ranking"></div>
+
+<br>
+
+<input id="name" placeholder="Nome" />
+<input id="score" type="number" placeholder="Nota 0-10" />
+<button onclick="add()">Adicionar</button>
 
 <script>
 const STORAGE_KEY = "nps_launches_v2";
 let launches = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
 
-// ✅ CONTROLE DE MÊS
 let currentDate = new Date();
 
 function formatMonth(date) {
@@ -36,86 +46,58 @@ function formatMonth(date) {
   });
 }
 
-function changeMonth(direction) {
-  currentDate.setMonth(currentDate.getMonth() + direction);
-  renderRanking();
-  renderHistorico();
+function changeMonth(dir) {
+  currentDate.setMonth(currentDate.getMonth() + dir);
+  render();
 }
 
-// ✅ FILTRO POR MÊS
 function getLaunchesByMonth() {
   return launches.filter(l => {
     const d = new Date(l.date);
-    return (
-      d.getMonth() === currentDate.getMonth() &&
-      d.getFullYear() === currentDate.getFullYear()
-    );
+    return d.getMonth() === currentDate.getMonth() &&
+           d.getFullYear() === currentDate.getFullYear();
   });
 }
 
-// 🔥 BUILD RANKING (AGORA POR MÊS)
-function buildRanking() {
-  const pts = {};
-  getLaunchesByMonth().forEach(({ name, scored }) => {
-    if (scored) pts[name] = (pts[name] || 0) + 1;
+function add() {
+  const name = document.getElementById("name").value;
+  const score = Number(document.getElementById("score").value);
+
+  if (!name || isNaN(score)) return alert("Preencha tudo");
+
+  launches.push({
+    id: Date.now(),
+    name,
+    score,
+    scored: score >= 8,
+    date: new Date(currentDate).toISOString()
   });
 
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(launches));
+
+  render();
+}
+
+function buildRanking() {
+  const pts = {};
+  getLaunchesByMonth().forEach(l => {
+    if (l.scored) pts[l.name] = (pts[l.name] || 0) + 1;
+  });
   return pts;
 }
 
-// 🧠 SUBMIT (AGORA SALVA NO MÊS ESCOLHIDO)
-function handleSubmit() {
-  const name = document.getElementById("op-select").value;
-  if (!name) return alert("Escolha operador");
-  if (selectedScore === null) return alert("Escolha nota");
+function render() {
+  document.getElementById("month").textContent = formatMonth(currentDate);
 
-  const scored = selectedScore >= 8;
-
-  const entry = {
-    id: Date.now(),
-    name,
-    score: selectedScore,
-    scored,
-    date: new Date(currentDate).toISOString() // 🔥 AQUI
-  };
-
-  launches.unshift(entry);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(launches));
-
-  renderRanking();
-  renderHistorico();
-}
-
-// 📊 RENDER RANKING (FILTRADO)
-function renderRanking() {
   const data = getLaunchesByMonth();
+  document.getElementById("count").textContent =
+    data.length + " lançamentos";
 
-  document.getElementById("rank-date").textContent =
-    formatMonth(currentDate) + " · " + data.length + " lançamentos";
-
-  const pts = buildRanking();
-
-  document.getElementById("ranking-rows").innerHTML =
-    "<pre>" + JSON.stringify(pts, null, 2) + "</pre>";
+  document.getElementById("ranking").innerHTML =
+    "<pre>" + JSON.stringify(buildRanking(), null, 2) + "</pre>";
 }
 
-// 📋 HISTÓRICO (FILTRADO)
-function renderHistorico() {
-  const data = getLaunchesByMonth();
-
-  const container = document.getElementById("hist-rows");
-  container.innerHTML = "";
-
-  data.forEach(l => {
-    const div = document.createElement("div");
-    div.textContent = `${l.name} - ${l.score}`;
-    container.appendChild(div);
-  });
-}
-
-// 🚀 INIT
-renderRanking();
-renderHistorico();
+render();
 </script>
 
 </body>
