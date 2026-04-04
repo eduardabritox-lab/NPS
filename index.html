@@ -9,23 +9,28 @@
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<title>NPS Ranking Oficial</title>
+<title>NPS Ranking</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html {
+html, body {
 background: #0a0a0a !important;
 color-scheme: dark;
+width: 100%;
+min-height: 100vh;
+min-height: 100dvh;
+}
+
+body {
+font-family: ‘DM Sans’, sans-serif;
+color: #e8e8e8;
 }
 
 :root {
-–bg: #0a0a0a;
-–surface: #111;
 –border: #1e1e1e;
 –border-dim: #161616;
-–text: #e8e8e8;
 –dim: #555;
 –green: #4ade80;
 –gold:   #FFD700;
@@ -33,15 +38,14 @@ color-scheme: dark;
 –bronze: #CD7F32;
 }
 
-body { background: #0a0a0a !important; background-color: #0a0a0a !important; font-family: ‘DM Sans’, sans-serif; color: var(–text); min-height: 100vh; min-height: 100dvh; }
 #app { width: 100%; padding-bottom: env(safe-area-inset-bottom, 40px); }
 
 /* TABS */
 .tabs {
-display: flex; background: #0d0d0d;
+display: flex;
+background: #0d0d0d;
 border-bottom: 1px solid var(–border);
 position: sticky; top: 0; z-index: 100;
-padding-top: env(safe-area-inset-top, 0px);
 }
 .tab-btn {
 flex: 1; padding: 13px 0;
@@ -57,9 +61,9 @@ transition: color 0.15s, border-color 0.15s;
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
 
-/* CARD / FORM */
+/* CARDS */
 .card {
-background: var(–surface); border: 1px solid var(–border);
+background: #111; border: 1px solid var(–border);
 border-radius: 12px; padding: 14px; margin-bottom: 14px;
 }
 .lbl {
@@ -84,39 +88,25 @@ border: 1px solid #2a4a2a; border-radius: 8px; padding: 12px;
 font-family: ‘DM Sans’, sans-serif; font-weight: 700; font-size: 14px; cursor: pointer;
 }
 
-/* SCORE BUTTONS — menores */
+/* SCORE BUTTONS */
 .score-grid {
-display: grid;
-grid-template-columns: repeat(5, 1fr);
-gap: 6px;
-margin-bottom: 14px;
+display: grid; grid-template-columns: repeat(5, 1fr);
+gap: 6px; margin-bottom: 14px;
 }
 .score-btn {
-padding: 7px 0;
-border-radius: 7px;
+padding: 7px 0; border-radius: 7px;
 border: 2px solid transparent;
 font-family: ‘DM Mono’, monospace;
-font-size: 13px;
-font-weight: 700;
-cursor: pointer;
+font-size: 13px; font-weight: 700;
+cursor: pointer; color: #000; opacity: 0.5;
 transition: transform 0.1s, opacity 0.1s;
-color: #000;
-opacity: 0.5;
 }
 .score-btn:active { transform: scale(0.93); }
 .score-btn.selected { opacity: 1; border-color: rgba(255,255,255,0.35); transform: scale(1.05); }
-
-/* cores NPS */
-.score-btn[data-v=“1”],
-.score-btn[data-v=“2”],
-.score-btn[data-v=“3”],
-.score-btn[data-v=“4”],
-.score-btn[data-v=“5”],
-.score-btn[data-v=“6”] { background: #ef4444; }
-.score-btn[data-v=“7”],
-.score-btn[data-v=“8”] { background: #facc15; color: #111; }
-.score-btn[data-v=“9”],
-.score-btn[data-v=“10”] { background: var(–green); }
+.score-btn[data-v=“1”],.score-btn[data-v=“2”],.score-btn[data-v=“3”],
+.score-btn[data-v=“4”],.score-btn[data-v=“5”],.score-btn[data-v=“6”] { background: #ef4444; color: #fff; }
+.score-btn[data-v=“7”],.score-btn[data-v=“8”] { background: #facc15; color: #111; }
+.score-btn[data-v=“9”],.score-btn[data-v=“10”] { background: var(–green); color: #000; }
 
 /* RANKING */
 .ranking-card {
@@ -130,14 +120,9 @@ padding: 12px 14px; background: #111; border-bottom: 1px solid var(–border);
 .ranking-head-title { font-size: 13px; font-weight: 700; color: var(–green); }
 .ranking-head-month { font-family: ‘DM Mono’, monospace; font-size: 10px; color: var(–dim); text-transform: uppercase; }
 
-/* última atualização */
 .last-updated {
-font-family: ‘DM Mono’, monospace;
-font-size: 10px;
-color: #383838;
-text-align: right;
-margin-bottom: 14px;
-padding-right: 2px;
+font-family: ‘DM Mono’, monospace; font-size: 10px;
+color: #383838; text-align: right; margin-bottom: 10px; padding-right: 2px;
 }
 .last-updated span { color: #484848; }
 
@@ -164,15 +149,11 @@ min-width: 26px; color: var(–dim); text-align: center;
 display: flex; justify-content: space-between; align-items: center;
 margin-bottom: 5px; font-size: 13px;
 }
-.op-name { font-weight: 500; display: flex; align-items: center; gap: 5px; }
-.new-pts {
-font-family: ‘DM Mono’, monospace; font-size: 10px; font-weight: 700;
-color: var(–green); background: rgba(74,222,128,0.1);
-border: 1px solid rgba(74,222,128,0.2); border-radius: 4px; padding: 1px 5px;
-}
+.op-name { font-weight: 500; }
 
+/* pontuação — cor espelha a medalha */
 .pts-total {
-font-family: ‘DM Mono’, monospace; font-weight: 700; font-size: 13px; color: #888;
+font-family: ‘DM Mono’, monospace; font-weight: 700; font-size: 13px; color: #666;
 }
 .pts-total small { font-size: 9px; margin-left: 1px; color: var(–dim); }
 .pts-total.medal-0 { color: var(–gold); }
@@ -198,19 +179,13 @@ padding: 16px; background: #111;
 border-bottom: 1px solid var(–border); text-align: center;
 }
 .capture-title { font-size: 16px; font-weight: 700; color: var(–green); }
-.capture-subtitle {
-font-size: 9px; color: var(–dim); text-transform: uppercase;
-letter-spacing: 2px; margin-top: 3px;
-}
+.capture-subtitle { font-size: 9px; color: var(–dim); text-transform: uppercase; letter-spacing: 2px; margin-top: 3px; }
 .capture-month-lbl { font-family: ‘DM Mono’, monospace; font-size: 11px; color: #777; margin-top: 6px; }
 .capture-footer {
 display: flex; justify-content: space-between; align-items: center;
 padding: 10px 14px; background: #0d0d0d; border-top: 1px solid #161616;
 }
-.capture-brand {
-font-family: ‘DM Mono’, monospace; font-size: 9px;
-color: #333; letter-spacing: 1px; text-transform: uppercase;
-}
+.capture-brand { font-family: ‘DM Mono’, monospace; font-size: 9px; color: #333; letter-spacing: 1px; text-transform: uppercase; }
 .capture-brand span { color: var(–green); }
 
 /* CONFIG */
@@ -219,16 +194,13 @@ display: flex; justify-content: space-between; align-items: center;
 padding: 10px 12px; background: #0d0d0d; border: 1px solid #1e1e1e;
 border-radius: 6px; margin-bottom: 6px; font-size: 13px;
 }
-.btn-del {
-background: #2a1010; color: #f87171; border: none;
-padding: 5px 10px; border-radius: 5px; font-size: 11px; cursor: pointer;
-}
+.btn-del { background: #2a1010; color: #f87171; border: none; padding: 5px 10px; border-radius: 5px; font-size: 11px; cursor: pointer; }
 
 /* TOAST */
 #toast {
 position: fixed; bottom: 26px; left: 50%;
 transform: translateX(-50%) translateY(14px);
-background: #1a1a1a; border: 1px solid #2e2e2e; color: var(–text);
+background: #1a1a1a; border: 1px solid #2e2e2e; color: #e8e8e8;
 padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 600;
 opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s;
 z-index: 999; white-space: nowrap;
@@ -272,14 +244,11 @@ z-index: 999; white-space: nowrap;
   <div class="card">
     <label class="lbl">Operador</label>
     <select id="select-op" class="input-field"></select>
-
     <label class="lbl">Data do Atendimento</label>
     <input type="date" id="input-date" class="input-field">
-
     <label class="lbl">Nota NPS</label>
     <div class="score-grid" id="score-grid"></div>
     <input type="hidden" id="selected-score">
-
     <button class="btn-primary" onclick="addLaunch()">Salvar e Atualizar ✅</button>
   </div>
 </div>
@@ -321,20 +290,45 @@ z-index: 999; white-space: nowrap;
 </div>
 
 <script>
-const K_OPS     = "nps_ops_v7";
-const K_DATA    = "nps_data_v7";
-const K_UPDATED = "nps_updated_v7";
+const K_OPS     = "nps_ops_v8";
+const K_DATA    = "nps_data_v8";
+const K_UPDATED = "nps_updated_v8";
 
-// Operadores sem pontos base — cada mês começa do zero
-const INITIAL_OPS = [
+const OPERATORS = [
   "Liz","Natália","Carolina","Alef","Davi","Daniele",
   "Michele","Sunamita","Blenda","Fernanda","Lucas",
   "Eduarda","Kaio","Patrícia"
 ];
 
-let operators  = JSON.parse(localStorage.getItem(K_OPS))  || INITIAL_OPS;
+// Pontos de março pré-carregados como lançamentos reais
+// Cada ponto = 1 avaliação com nota 10 na data 2026-03-26
+const MARCH_SCORES = {
+  "Liz": 42, "Natália": 21, "Carolina": 15, "Alef": 15,
+  "Davi": 14, "Daniele": 13, "Michele": 13, "Sunamita": 12,
+  "Blenda": 11, "Fernanda": 9, "Lucas": 8, "Eduarda": 6,
+  "Kaio": 3, "Patrícia": 1
+};
+
+function seedMarch(launches) {
+  // Verifica se março já foi semeado
+  const already = launches.some(l => l.date === "2026-03-26" && l._seed);
+  if (already) return launches;
+  const seeds = [];
+  for (const [name, pts] of Object.entries(MARCH_SCORES)) {
+    for (let i = 0; i < pts; i++) {
+      seeds.push({ name, date: "2026-03-26", score: 10, _seed: true });
+    }
+  }
+  return [...launches, ...seeds];
+}
+
+let operators  = JSON.parse(localStorage.getItem(K_OPS))  || OPERATORS;
 let launches   = JSON.parse(localStorage.getItem(K_DATA)) || [];
 let lastUpdate = localStorage.getItem(K_UPDATED)          || null;
+
+// Semeia março se necessário
+launches = seedMarch(launches);
+localStorage.setItem(K_DATA, JSON.stringify(launches));
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 
@@ -349,7 +343,6 @@ function init() {
     btn.onclick     = () => selectScore(i, btn);
     grid.appendChild(btn);
   }
-
   populateMonths('rank-month');
   populateMonths('capture-month-sel');
   document.getElementById('input-date').value = new Date().toISOString().slice(0, 10);
@@ -386,7 +379,7 @@ function save() {
   localStorage.setItem(K_UPDATED, lastUpdate);
 }
 
-// Cada mês é ciclo independente — só conta lançamentos do mês, score >= 9
+// Cada mês é ciclo independente
 function buildRank(month) {
   const scoreMap = {};
   launches
@@ -394,12 +387,8 @@ function buildRank(month) {
     .forEach(l => {
       if (l.score >= 9) scoreMap[l.name] = (scoreMap[l.name] || 0) + 1;
     });
-
   return operators
-    .map(name => ({
-      name,
-      total: scoreMap[name] || 0
-    }))
+    .map(name => ({ name, total: scoreMap[name] || 0 }))
     .sort((a, b) => b.total - a.total);
 }
 
@@ -416,10 +405,8 @@ function rowHTML(op, i, rank) {
   const max        = rank[0]?.total || 1;
   const pct        = max > 0 ? (op.total / max) * 100 : 0;
   const medalClass = i < 3 && op.total > 0 ? `medal-${i}` : '';
-  const emoji      = op.total > 0
-    ? (['🥇','🥈','🥉'][i] ?? `${i+1}º`)
-    : `${i+1}º`;
-  const ptsClass   = medalClass || 'rest';
+  const emoji      = op.total > 0 ? (['🥇','🥈','🥉'][i] ?? `${i+1}º`) : `${i+1}º`;
+  const ptsClass   = medalClass || '';
 
   return `
     <div class="rank-row ${medalClass}">
@@ -437,12 +424,8 @@ function rowHTML(op, i, rank) {
 function renderRanking() {
   const month = document.getElementById('rank-month').value;
   document.getElementById('display-month').innerText = month;
-
   const lu = document.getElementById('last-updated');
-  lu.innerHTML = lastUpdate
-    ? `atualizado em <span>${lastUpdate}</span>`
-    : '';
-
+  lu.innerHTML = lastUpdate ? `atualizado em <span>${lastUpdate}</span>` : '';
   const rank = buildRank(month);
   document.getElementById('ranking-list').innerHTML =
     rank.map((op, i) => rowHTML(op, i, rank)).join('');
@@ -453,13 +436,10 @@ function renderCapture() {
   const rank  = buildRank(month);
   document.getElementById('capture-list').innerHTML =
     rank.map((op, i) => rowHTML(op, i, rank)).join('');
-
   const label = new Date(month + '-02')
-    .toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
-    .toUpperCase();
+    .toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase();
   document.getElementById('capture-month-lbl').innerText = label;
-  document.getElementById('capture-date-lbl').innerText  =
-    new Date().toLocaleDateString('pt-BR');
+  document.getElementById('capture-date-lbl').innerText  = new Date().toLocaleDateString('pt-BR');
 }
 
 function renderOpSelectors() {
