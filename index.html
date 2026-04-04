@@ -161,13 +161,7 @@ font-family: ‘DM Mono’, monospace; font-weight: 700; font-size: 13px; color:
 .pts-total.medal-2 { color: var(–bronze); }
 
 .bar-bg { height: 5px; background: #1a1a1a; border-radius: 3px; overflow: hidden; }
-.bar-fill {
-height: 100%; border-radius: 3px; transition: width 0.6s ease;
-background: linear-gradient(90deg, #1f3a2a, var(–green));
-}
-.rank-row.medal-0 .bar-fill { background: linear-gradient(90deg, #6a5500, var(–gold)); }
-.rank-row.medal-1 .bar-fill { background: linear-gradient(90deg, #505050, var(–silver)); }
-.rank-row.medal-2 .bar-fill { background: linear-gradient(90deg, #5a3010, var(–bronze)); }
+.bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
 
 /* CAPTURA */
 #capture-area {
@@ -177,13 +171,6 @@ border-radius: 10px; overflow: hidden; margin-bottom: 14px;
 #capture-area .rank-row { padding: 7px 12px; }
 #capture-area .op-info { margin-bottom: 3px; font-size: 12px; }
 #capture-area .bar-bg { height: 3px; }
-#capture-area .bar-fill { background: linear-gradient(90deg, #1f3a2a, var(–green)); }
-#capture-area .rank-row.medal-0 .bar-fill { background: linear-gradient(90deg, #6a5500, var(–gold)) !important; }
-#capture-area .rank-row.medal-1 .bar-fill { background: linear-gradient(90deg, #505050, var(–silver)) !important; }
-#capture-area .rank-row.medal-2 .bar-fill { background: linear-gradient(90deg, #5a3010, var(–bronze)) !important; }
-.rank-row.medal-0 .bar-fill { background: linear-gradient(90deg, #6a5500, var(–gold)) !important; }
-.rank-row.medal-1 .bar-fill { background: linear-gradient(90deg, #505050, var(–silver)) !important; }
-.rank-row.medal-2 .bar-fill { background: linear-gradient(90deg, #5a3010, var(–bronze)) !important; }
 
 .capture-header {
 padding: 12px 16px; background: #111;
@@ -427,7 +414,7 @@ function rowHTML(op, i, rank) {
           <div class="op-name">${op.name}</div>
           <span class="pts-total ${ptsClass}">${op.total}<small>PTS</small></span>
         </div>
-        <div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:${pct}%; background:${i===0&&op.total>0?'#FFD700':i===1&&op.total>0?'#C0C0C0':i===2&&op.total>0?'#CD7F32':'#4ade80'}"></div></div>
       </div>
     </div>`;
 }
